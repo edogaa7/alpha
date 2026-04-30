@@ -911,21 +911,20 @@ function escapeHtml(text) {
 }
 
 function formatMarkdown(text) {
-  text = text
-    .replace(/#{1,6}\s+/g, '')
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/\*(.+?)\*/g, '$1')
-    .replace(/`{3}[\s\S]*?`{3}/g, match => {
-      const code = match.replace(/```\w*\n?/, '').replace(/```$/, '').trim();
-      return `<pre><code>${escapeHtml(code)}</code></pre>`;
-    })
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/^>\s+(.+)$/gm, '$1')
-    .replace(/^[\-\*]\s+(.+)$/gm, '• $1')
-    .replace(/^\d+\.\s+(.+)$/gm, '$1')
+  const lines = text.split('\n');
+  const cleaned = lines.map(line => {
+    line = line.replace(/^#{1,6}\s+/, '');
+    line = line.replace(/^>\s*/, '');
+    line = line.replace(/^[\-\*]\s+/, '• ');
+    line = line.replace(/^\d+\.\s+/, '');
+    line = line.replace(/\*\*(.+?)\*\*/g, '$1');
+    line = line.replace(/\*(.+?)\*/g, '$1');
+    line = line.replace(/`([^`]+)`/g, '$1');
+    return line;
+  });
+  return escapeHtml(cleaned.join('\n'))
     .replace(/\n\n/g, '<br><br>')
     .replace(/\n/g, '<br>');
-  return text;
 }
 
 async function sendMessage() {
@@ -949,7 +948,7 @@ async function sendMessage() {
   const typingDiv = appendTyping();
 
   try {
-    const model = 'gemini-3-flash-preview';
+    const model = 'gemini-2.0-flash';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {

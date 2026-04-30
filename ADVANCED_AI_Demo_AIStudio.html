@@ -948,7 +948,7 @@ async function sendMessage() {
   const typingDiv = appendTyping();
 
   try {
-    const model = 'gemini-2.0-flash';
+    const model = 'gemini-3-flash-preview';
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const PLAIN_TEXT_INSTRUCTION = 'IMPORTANT: Respond in plain text only. Do not use markdown formatting of any kind — no #, ##, ###, no **, no *, no >, no backticks, no bullet dashes. Write as if you are typing a normal message. Use plain paragraphs and simple line breaks only.';
